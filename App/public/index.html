@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Union Européenne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #070510;
+  --ink2: #0d0b1e;
+  --gold: #c9a84c;
+  --gold-light: #e8c96a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --gold-border: rgba(201,168,76,0.35);
+  --cream: #f5f0e8;
+  --text: #e8e0d0;
+  --text-dim: #9a8f7a;
+  --eu-blue: #003399;
+  --eu-gold: #FFCC00;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--ink); overflow: hidden; }
+
+#app {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  display: flex; flex-direction: column;
+  padding-top: var(--safe-top);
+  background: var(--ink);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: var(--text);
+}
+
+/* HEADER */
+header {
+  background: linear-gradient(180deg, #0a0820 0%, var(--ink) 100%);
+  border-bottom: 1px solid var(--gold-border);
+  padding: 10px 16px 8px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.header-title {
+  display: flex; align-items: center; gap: 10px;
+}
+.eu-flag-mini {
+  width: 32px; height: 21px;
+  background: var(--eu-blue);
+  border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+header h1 {
+  font-family: 'IM Fell English', serif;
+  font-size: 18px;
+  color: var(--gold);
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+}
+header h1 span { display: block; font-size: 11px; color: var(--text-dim); font-style: italic; font-family: 'Cormorant Garamond', serif; font-weight: 400; }
+.lang-toggle { display: flex; gap: 4px; }
+.lang-btn {
+  background: none; border: 1px solid var(--gold-border);
+  color: var(--text-dim); padding: 4px 10px;
+  border-radius: 20px; font-size: 13px; cursor: pointer;
+  font-family: 'Cormorant Garamond', serif;
+  transition: all 0.2s;
+}
+.lang-btn.active { background: var(--gold-dim); color: var(--gold); border-color: var(--gold); }
+
+/* TABS */
+nav {
+  display: flex; background: var(--ink2);
+  border-bottom: 1px solid var(--gold-border);
+  flex-shrink: 0;
+}
+.tab-btn {
+  flex: 1; padding: 10px 4px; background: none; border: none;
+  color: var(--text-dim); font-size: 11px; cursor: pointer;
+  font-family: 'Cormorant Garamond', serif;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s; letter-spacing: 0.5px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.tab-btn .tab-icon { font-size: 18px; }
+.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* CONTENT */
+.tab-content { flex: 1; overflow: hidden; display: none; flex-direction: column; }
+.tab-content.active { display: flex; }
+
+/* ===== PAYS TAB ===== */
+#tab-pays { overflow: hidden; display: none; flex-direction: column; }
+#tab-pays.active { display: flex; }
+.search-bar {
+  padding: 10px 12px; background: var(--ink2);
+  border-bottom: 1px solid var(--gold-border); flex-shrink: 0;
+}
+.search-bar input {
+  width: 100%; background: rgba(201,168,76,0.07);
+  border: 1px solid var(--gold-border); border-radius: 20px;
+  color: var(--text); padding: 7px 14px;
+  font-family: 'Cormorant Garamond', serif; font-size: 15px;
+  outline: none;
+}
+.search-bar input::placeholder { color: var(--text-dim); }
+.pays-list {
+  flex: 1; overflow-y: auto; padding: 8px 0;
+}
+.pays-list::-webkit-scrollbar { width: 4px; }
+.pays-list::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 2px; }
+.pays-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; cursor: pointer;
+  border-bottom: 1px solid rgba(201,168,76,0.08);
+  transition: background 0.15s;
+}
+.pays-item:active { background: var(--gold-dim); }
+.pays-flag { font-size: 28px; flex-shrink: 0; }
+.pays-info { flex: 1; min-width: 0; }
+.pays-nom { font-size: 16px; color: var(--text); font-weight: 600; }
+.pays-capitale { font-size: 13px; color: var(--text-dim); font-style: italic; }
+.pays-arrow { color: var(--gold-dim); font-size: 16px; }
+
+/* DETAIL OVERLAY */
+.detail-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: var(--ink);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  padding-top: var(--safe-top);
+}
+.detail-overlay.open { transform: translateX(0); }
+.detail-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--gold-border);
+  background: var(--ink2); flex-shrink: 0;
+}
+.back-btn {
+  background: none; border: none; color: var(--gold);
+  font-size: 22px; cursor: pointer; padding: 4px;
+}
+.detail-header h2 {
+  font-family: 'IM Fell English', serif;
+  color: var(--gold); font-size: 20px; flex: 1;
+}
+.detail-header .flag-big { font-size: 32px; }
+.detail-scroll { flex: 1; overflow-y: auto; padding: 0 0 40px; }
+.detail-scroll::-webkit-scrollbar { width: 4px; }
+.detail-scroll::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 2px; }
+.detail-hero {
+  background: linear-gradient(135deg, var(--ink2) 0%, #0d0b30 100%);
+  padding: 20px 16px;
+  border-bottom: 1px solid var(--gold-border);
+  text-align: center;
+}
+.detail-flag-large { font-size: 72px; display: block; margin-bottom: 8px; }
+.detail-nom { font-family: 'IM Fell English', serif; font-size: 26px; color: var(--gold); }
+.detail-nom-en { font-size: 15px; color: var(--text-dim); font-style: italic; margin-top: 2px; }
+.detail-section { padding: 16px 16px 0; }
+.detail-section h3 {
+  font-family: 'IM Fell English', serif; color: var(--gold);
+  font-size: 14px; letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--gold-border);
+}
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.info-card {
+  background: var(--gold-dim); border: 1px solid var(--gold-border);
+  border-radius: 8px; padding: 10px;
+}
+.info-card .label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.8px; }
+.info-card .value { font-size: 15px; color: var(--text); font-weight: 600; margin-top: 2px; }
+.detail-desc {
+  font-size: 15px; color: var(--text-dim); line-height: 1.7;
+  margin-top: 10px;
+}
+.detail-wikipedia-img {
+  width: 100%; max-height: 200px; object-fit: cover;
+  border-radius: 8px; margin-top: 10px;
+  border: 1px solid var(--gold-border);
+}
+
+/* ===== CARTE TAB ===== */
+#tab-carte { overflow: hidden; }
+#map { flex: 1; width: 100%; }
+
+/* ===== QUIZ TAB ===== */
+#tab-quiz { overflow-y: auto; }
+#tab-quiz::-webkit-scrollbar { width: 4px; }
+#tab-quiz::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 2px; }
+.quiz-container { padding: 16px; max-width: 600px; margin: 0 auto; }
+.quiz-header-section {
+  text-align: center; padding: 20px 0 16px;
+  border-bottom: 1px solid var(--gold-border); margin-bottom: 16px;
+}
+.quiz-header-section h2 { font-family: 'IM Fell English', serif; color: var(--gold); font-size: 22px; }
+.quiz-header-section p { color: var(--text-dim); font-size: 14px; margin-top: 4px; font-style: italic; }
+.quiz-score-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--gold-dim); border: 1px solid var(--gold-border);
+  border-radius: 10px; padding: 10px 16px; margin-bottom: 16px;
+}
+.score-item { text-align: center; }
+.score-item .num { font-family: 'IM Fell English', serif; font-size: 24px; color: var(--gold); }
+.score-item .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+.quiz-type-selector {
+  display: flex; gap: 8px; margin-bottom: 16px;
+}
+.quiz-type-btn {
+  flex: 1; padding: 8px 4px; background: none;
+  border: 1px solid var(--gold-border); border-radius: 8px;
+  color: var(--text-dim); font-size: 12px; cursor: pointer;
+  font-family: 'Cormorant Garamond', serif; transition: all 0.2s;
+  text-align: center;
+}
+.quiz-type-btn.active { background: var(--gold-dim); color: var(--gold); border-color: var(--gold); }
+.question-card {
+  background: var(--ink2); border: 1px solid var(--gold-border);
+  border-radius: 12px; padding: 20px; margin-bottom: 14px;
+}
+.question-number { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.question-flag { font-size: 56px; display: block; text-align: center; margin: 12px 0; }
+.question-text { font-size: 18px; color: var(--text); text-align: center; font-style: italic; line-height: 1.4; }
+.answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+.answer-btn {
+  background: rgba(201,168,76,0.06); border: 1px solid var(--gold-border);
+  color: var(--text); padding: 12px 8px; border-radius: 8px;
+  font-family: 'Cormorant Garamond', serif; font-size: 14px;
+  cursor: pointer; transition: all 0.2s; text-align: center; line-height: 1.3;
+}
+.answer-btn:active { transform: scale(0.97); }
+.answer-btn.correct { background: rgba(76,201,100,0.2); border-color: #4cc964; color: #4cc964; }
+.answer-btn.wrong { background: rgba(201,76,76,0.2); border-color: #c94c4c; color: #c94c4c; }
+.answer-btn.disabled { pointer-events: none; opacity: 0.5; }
+.quiz-feedback {
+  text-align: center; padding: 12px;
+  font-size: 16px; font-weight: 600; border-radius: 8px;
+  margin-top: 10px; display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct { background: rgba(76,201,100,0.1); color: #4cc964; }
+.quiz-feedback.wrong { background: rgba(201,76,76,0.1); color: #c94c4c; }
+.next-btn {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--gold) 0%, #a87a30 100%);
+  border: none; border-radius: 10px; color: var(--ink);
+  font-family: 'IM Fell English', serif; font-size: 17px;
+  cursor: pointer; margin-top: 12px; display: none;
+  transition: opacity 0.2s;
+}
+.next-btn.show { display: block; }
+.quiz-result {
+  text-align: center; padding: 30px 16px;
+  display: none;
+}
+.quiz-result.show { display: block; }
+.quiz-result .big-score { font-family: 'IM Fell English', serif; font-size: 64px; color: var(--gold); }
+.quiz-result h3 { font-family: 'IM Fell English', serif; color: var(--gold); font-size: 24px; margin: 8px 0; }
+.quiz-result p { color: var(--text-dim); font-size: 15px; font-style: italic; }
+.restart-btn {
+  margin-top: 20px; padding: 14px 40px;
+  background: var(--gold-dim); border: 1px solid var(--gold);
+  color: var(--gold); border-radius: 10px;
+  font-family: 'IM Fell English', serif; font-size: 17px; cursor: pointer;
+}
+
+/* ===== INSTITUTIONS TAB ===== */
+#tab-instit { overflow-y: auto; flex-direction: column; }
+#tab-instit::-webkit-scrollbar { width: 4px; }
+#tab-instit::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 2px; }
+.instit-list { padding: 0 0 40px; }
+.instit-section-header {
+  padding: 16px 14px 8px;
+  font-family: 'IM Fell English', serif;
+  color: var(--gold); font-size: 13px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  border-bottom: 1px solid var(--gold-border);
+  background: linear-gradient(180deg, rgba(201,168,76,0.06) 0%, transparent 100%);
+}
+.instit-intro {
+  padding: 14px 14px 2px;
+  font-size: 13px; color: var(--text-dim); font-style: italic; line-height: 1.6;
+}
+.instit-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 14px; cursor: pointer;
+  border-bottom: 1px solid rgba(201,168,76,0.08);
+  transition: background 0.15s;
+}
+.instit-card:active { background: var(--gold-dim); }
+.instit-card-icon {
+  width: 48px; height: 48px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--gold-dim), rgba(201,168,76,0.05));
+  border: 1px solid var(--gold-border); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+}
+.instit-card-body { flex: 1; min-width: 0; }
+.instit-card-nom { font-size: 15px; color: var(--text); font-weight: 600; line-height: 1.2; }
+.instit-card-tagline { font-size: 12px; color: var(--text-dim); font-style: italic; margin-top: 2px; line-height: 1.3; }
+.instit-card-badge {
+  font-size: 10px; color: var(--gold); background: var(--gold-dim);
+  border: 1px solid var(--gold-border); border-radius: 10px;
+  padding: 2px 8px; margin-top: 5px; display: inline-block; letter-spacing: 0.3px;
+}
+.instit-card-arrow { color: var(--gold-border); font-size: 16px; flex-shrink: 0; }
+.instit-power-item {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 8px 0; border-bottom: 1px solid rgba(201,168,76,0.06);
+}
+.instit-power-bullet { color: var(--gold); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.instit-power-text { font-size: 14px; color: var(--text-dim); line-height: 1.5; }
+
+/* ===== MES APPS TAB ===== */
+#tab-apps { overflow-y: auto; }
+#tab-apps::-webkit-scrollbar { width: 4px; }
+#tab-apps::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 2px; }
+.apps-container { padding: 16px; }
+.apps-header {
+  text-align: center; padding: 16px 0 20px;
+  border-bottom: 1px solid var(--gold-border); margin-bottom: 16px;
+}
+.apps-header h2 { font-family: 'IM Fell English', serif; color: var(--gold); font-size: 22px; }
+.apps-header p { color: var(--text-dim); font-size: 13px; margin-top: 4px; font-style: italic; }
+.apps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.app-card {
+  background: var(--ink2); border: 1px solid var(--gold-border);
+  border-radius: 12px; padding: 14px 10px;
+  text-align: center; cursor: pointer; transition: all 0.2s;
+  text-decoration: none; display: block;
+}
+.app-card:active { background: var(--gold-dim); transform: scale(0.97); }
+.app-icon { font-size: 32px; display: block; margin-bottom: 6px; }
+.app-name { font-size: 12px; color: var(--text); font-weight: 600; line-height: 1.2; }
+.app-cat { font-size: 10px; color: var(--text-dim); margin-top: 3px; font-style: italic; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(7,5,16,0.85);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  padding-bottom: var(--safe-bot);
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: #0f0d22; border: 1px solid var(--gold-border);
+  border-radius: 16px 16px 0 0; padding: 20px;
+  width: 100%; max-width: 480px;
+  transform: translateY(100%); transition: transform 0.3s ease;
+}
+.modal-overlay.open .modal-box { transform: translateY(0); }
+.modal-box h3 { font-family: 'IM Fell English', serif; color: var(--gold); font-size: 20px; margin-bottom: 12px; text-align: center; }
+.modal-box p { color: var(--text); line-height: 1.6; margin-bottom: 12px; text-align: center; }
+.modal-ok {
+  width: 100%; padding: 12px;
+  background: var(--gold-dim); border: 1px solid var(--gold);
+  color: var(--gold); border-radius: 8px;
+  font-family: 'IM Fell English', serif; font-size: 16px; cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-title">
+      <div class="eu-flag-mini">🇪🇺</div>
+      <h1>
+        <span id="h-subtitle">Les 27 pays membres</span>
+        Union Européenne
+      </h1>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('fr')">🇫🇷</button>
+      <button class="lang-btn" onclick="setLang('en')">🇬🇧</button>
+    </div>
+  </header>
+
+  <!-- NAV TABS -->
+  <nav>
+    <button class="tab-btn active" onclick="showTab('pays')" id="btn-pays">
+      <span class="tab-icon">🗺</span>
+      <span data-fr="Pays" data-en="Countries">Pays</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('carte')" id="btn-carte">
+      <span class="tab-icon">📍</span>
+      <span data-fr="Carte" data-en="Map">Carte</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('quiz')" id="btn-quiz">
+      <span class="tab-icon">🎯</span>
+      <span data-fr="Quiz" data-en="Quiz">Quiz</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('instit')" id="btn-instit">
+      <span class="tab-icon">🏛</span>
+      <span data-fr="Institutions" data-en="Institutions">Institutions</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('apps')" id="btn-apps">
+      <span class="tab-icon">📱</span>
+      <span data-fr="Mes Apps" data-en="My Apps">Mes Apps</span>
+    </button>
+  </nav>
+
+  <!-- ===== PAYS TAB ===== -->
+  <div class="tab-content active" id="tab-pays">
+    <div class="search-bar">
+      <input type="search" id="search-input" data-placeholder-fr="Rechercher un pays..." data-placeholder-en="Search a country..." placeholder="Rechercher un pays..." oninput="filterPays(this.value)">
+    </div>
+    <div class="pays-list" id="pays-list"></div>
+  </div>
+
+  <!-- ===== CARTE TAB ===== -->
+  <div class="tab-content" id="tab-carte">
+    <div id="map"></div>
+  </div>
+
+  <!-- ===== QUIZ TAB ===== -->
+  <div class="tab-content" id="tab-quiz">
+    <div class="quiz-container">
+      <div class="quiz-header-section">
+        <h2>🎯 <span data-fr="Quiz Europe" data-en="Europe Quiz">Quiz Europe</span></h2>
+        <p data-fr="Testez vos connaissances sur l'UE" data-en="Test your EU knowledge">Testez vos connaissances sur l'UE</p>
+      </div>
+      <div class="quiz-score-bar">
+        <div class="score-item">
+          <div class="num" id="q-score">0</div>
+          <div class="lbl" data-fr="Score" data-en="Score">Score</div>
+        </div>
+        <div class="score-item">
+          <div class="num" id="q-current">1</div>
+          <div class="lbl" data-fr="Question" data-en="Question">Question</div>
+        </div>
+        <div class="score-item">
+          <div class="num" id="q-total">10</div>
+          <div class="lbl" data-fr="Total" data-en="Total">Total</div>
+        </div>
+      </div>
+      <div class="quiz-type-selector">
+        <button class="quiz-type-btn active" onclick="setQuizType('capitale')" id="qtype-capitale">
+          🏛 <span data-fr="Capitale" data-en="Capital">Capitale</span>
+        </button>
+        <button class="quiz-type-btn" onclick="setQuizType('drapeau')" id="qtype-drapeau">
+          🚩 <span data-fr="Drapeau" data-en="Flag">Drapeau</span>
+        </button>
+        <button class="quiz-type-btn" onclick="setQuizType('pays')" id="qtype-pays">
+          🗺 <span data-fr="Pays" data-en="Country">Pays</span>
+        </button>
+      </div>
+      <div id="quiz-area">
+        <div class="question-card" id="question-card">
+          <div class="question-number" id="q-num">QUESTION 1 / 10</div>
+          <span class="question-flag" id="q-flag"></span>
+          <p class="question-text" id="q-text"></p>
+          <div class="answers-grid" id="answers-grid"></div>
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+          <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+            <span data-fr="Question suivante →" data-en="Next question →">Question suivante →</span>
+          </button>
+        </div>
+        <div class="quiz-result" id="quiz-result">
+          <div class="big-score" id="result-score"></div>
+          <h3 id="result-title"></h3>
+          <p id="result-msg"></p>
+          <button class="restart-btn" onclick="startQuiz()">
+            <span data-fr="Rejouer" data-en="Play again">Rejouer</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== INSTITUTIONS TAB ===== -->
+  <div class="tab-content" id="tab-instit">
+    <div class="instit-list" id="instit-list"></div>
+  </div>
+
+  <!-- ===== MES APPS TAB ===== -->
+  <div class="tab-content" id="tab-apps">
+    <div class="apps-container">
+      <div class="apps-header">
+        <h2>📱 <span data-fr="Mes Applications" data-en="My Applications">Mes Applications</span></h2>
+        <p data-fr="Découvrez toutes mes apps" data-en="Discover all my apps">Découvrez toutes mes apps</p>
+      </div>
+      <div class="apps-grid" id="apps-grid"></div>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<!-- DETAIL OVERLAY -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeDetail()">←</button>
+    <h2 id="detail-title"></h2>
+    <span class="flag-big" id="detail-flag-header"></span>
+  </div>
+  <div class="detail-scroll">
+    <div class="detail-hero">
+      <span class="detail-flag-large" id="detail-flag-large"></span>
+      <div class="detail-nom" id="detail-nom"></div>
+      <div class="detail-nom-en" id="detail-nom-en"></div>
+    </div>
+    <div class="detail-section">
+      <h3 id="d-infos-title">Informations</h3>
+      <div class="info-grid" id="info-grid"></div>
+    </div>
+    <div class="detail-section" style="margin-top:12px;">
+      <h3 id="d-desc-title">Description</h3>
+      <p class="detail-desc" id="detail-desc"></p>
+    </div>
+  </div>
+</div>
+
+<!-- INSTITUTION DETAIL OVERLAY -->
+<div class="detail-overlay" id="instit-overlay">
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeInstit()">←</button>
+    <h2 id="instit-title"></h2>
+    <span class="flag-big" id="instit-icon-header"></span>
+  </div>
+  <div class="detail-scroll">
+    <div class="detail-hero" id="instit-hero">
+      <span class="detail-flag-large" id="instit-icon-large"></span>
+      <div class="detail-nom" id="instit-nom"></div>
+      <div class="detail-nom-en" id="instit-nom-en"></div>
+      <div id="instit-founded-badge" style="margin-top:10px;display:inline-block;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:20px;padding:4px 14px;font-size:12px;color:var(--gold);letter-spacing:0.5px"></div>
+    </div>
+    <div class="detail-section" style="margin-top:16px">
+      <h3 id="instit-role-title">Rôle</h3>
+      <p class="detail-desc" id="instit-role"></p>
+    </div>
+    <div class="detail-section" style="margin-top:12px">
+      <h3 id="instit-compo-title">Composition</h3>
+      <div class="info-grid" id="instit-info-grid"></div>
+    </div>
+    <div class="detail-section" style="margin-top:12px">
+      <h3 id="instit-powers-title">Pouvoirs & Fonctions</h3>
+      <div id="instit-powers-list" style="margin-top:8px"></div>
+    </div>
+    <div class="detail-section" style="margin-top:12px;padding-bottom:40px">
+      <h3 id="instit-siege-title">Siège</h3>
+      <p class="detail-desc" id="instit-siege"></p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box">
+    <h3 id="modal-title"></h3>
+    <p id="modal-msg"></p>
+    <button class="modal-ok" onclick="closeModalBtn()">OK</button>
+  </div>
+</div>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<!-- Leaflet JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<script>
+// =========================================================
+// DATA: 27 PAYS UE
+// =========================================================
+const PAYS_UE = [
+  { code:"DE", flag:"🇩🇪", fr:"Allemagne", en:"Germany", capitale_fr:"Berlin", capitale_en:"Berlin", adhesion:1958, superficie:357588, population:"83,2M", monnaie:"Euro (€)", langue_fr:"Allemand", langue_en:"German", desc_fr:"L'Allemagne est la plus grande économie d'Europe et un membre fondateur de l'UE. Connue pour son industrie automobile, sa culture et sa rigueur économique.", desc_en:"Germany is Europe's largest economy and a founding EU member. Known for its automotive industry, culture, and economic rigor.", lat:51.16, lng:10.45 },
+  { code:"AT", flag:"🇦🇹", fr:"Autriche", en:"Austria", capitale_fr:"Vienne", capitale_en:"Vienna", adhesion:1995, superficie:83871, population:"9M", monnaie:"Euro (€)", langue_fr:"Allemand", langue_en:"German", desc_fr:"L'Autriche est un pays alpin au cœur de l'Europe, riche d'un patrimoine musical et artistique exceptionnel. Vienne fut la capitale de l'Empire des Habsbourg.", desc_en:"Austria is an alpine country in the heart of Europe, rich in exceptional musical and artistic heritage. Vienna was the capital of the Habsburg Empire.", lat:47.51, lng:14.55 },
+  { code:"BE", flag:"🇧🇪", fr:"Belgique", en:"Belgium", capitale_fr:"Bruxelles", capitale_en:"Brussels", adhesion:1958, superficie:30528, population:"11,6M", monnaie:"Euro (€)", langue_fr:"Français/Néerlandais/Allemand", langue_en:"French/Dutch/German", desc_fr:"La Belgique, siège des institutions européennes, est connue pour sa bière, son chocolat et ses waffles. Elle est un carrefour culturel et linguistique unique.", desc_en:"Belgium, seat of EU institutions, is known for its beer, chocolate, and waffles. It is a unique cultural and linguistic crossroads.", lat:50.50, lng:4.47 },
+  { code:"BG", flag:"🇧🇬", fr:"Bulgarie", en:"Bulgaria", capitale_fr:"Sofia", capitale_en:"Sofia", adhesion:2007, superficie:110879, population:"6,5M", monnaie:"Lev (BGN)", langue_fr:"Bulgare", langue_en:"Bulgarian", desc_fr:"La Bulgarie est le plus ancien État slave des Balkans, avec une histoire millénaire et des paysages naturels variés allant des plages de la Mer Noire aux montagnes.", desc_en:"Bulgaria is the oldest Slavic state in the Balkans, with a millennial history and varied natural landscapes from Black Sea beaches to mountains.", lat:42.73, lng:25.48 },
+  { code:"CY", flag:"🇨🇾", fr:"Chypre", en:"Cyprus", capitale_fr:"Nicosie", capitale_en:"Nicosia", adhesion:2004, superficie:9251, population:"1,2M", monnaie:"Euro (€)", langue_fr:"Grec/Turc", langue_en:"Greek/Turkish", desc_fr:"Chypre est une île méditerranéenne à l'histoire ancienne, berceau de la déesse Aphrodite selon la mythologie grecque. Sa capitale Nicosie est la dernière ville divisée d'Europe.", desc_en:"Cyprus is a Mediterranean island with ancient history, birthplace of goddess Aphrodite in Greek mythology. Its capital Nicosia is Europe's last divided city.", lat:35.12, lng:33.43 },
+  { code:"HR", flag:"🇭🇷", fr:"Croatie", en:"Croatia", capitale_fr:"Zagreb", capitale_en:"Zagreb", adhesion:2013, superficie:56594, population:"4M", monnaie:"Euro (€)", langue_fr:"Croate", langue_en:"Croatian", desc_fr:"La Croatie, membre le plus récent de l'UE, est réputée pour ses côtes adriatiques cristallines, ses parcs nationaux et la vieille ville de Dubrovnik.", desc_en:"Croatia, the EU's most recent member, is renowned for its crystal-clear Adriatic coast, national parks, and the old town of Dubrovnik.", lat:45.10, lng:15.20 },
+  { code:"DK", flag:"🇩🇰", fr:"Danemark", en:"Denmark", capitale_fr:"Copenhague", capitale_en:"Copenhagen", adhesion:1973, superficie:43094, population:"5,9M", monnaie:"Couronne danoise", langue_fr:"Danois", langue_en:"Danish", desc_fr:"Le Danemark est régulièrement classé parmi les pays les plus heureux du monde. Berceau du design scandinave, il est pionnier en matière d'énergie éolienne.", desc_en:"Denmark is regularly ranked among the world's happiest countries. The cradle of Scandinavian design, it is a pioneer in wind energy.", lat:56.26, lng:9.50 },
+  { code:"ES", flag:"🇪🇸", fr:"Espagne", en:"Spain", capitale_fr:"Madrid", capitale_en:"Madrid", adhesion:1986, superficie:505990, population:"47,4M", monnaie:"Euro (€)", langue_fr:"Espagnol", langue_en:"Spanish", desc_fr:"L'Espagne est la quatrième économie de la zone euro, réputée pour sa culture vivante, son architecture (Gaudí), sa gastronomie et ses plages.", desc_en:"Spain is the fourth-largest eurozone economy, renowned for its vibrant culture, architecture (Gaudí), gastronomy, and beaches.", lat:40.46, lng:-3.74 },
+  { code:"EE", flag:"🇪🇪", fr:"Estonie", en:"Estonia", capitale_fr:"Tallinn", capitale_en:"Tallinn", adhesion:2004, superficie:45228, population:"1,3M", monnaie:"Euro (€)", langue_fr:"Estonien", langue_en:"Estonian", desc_fr:"L'Estonie est l'une des sociétés numériques les plus avancées au monde. Sa capitale Tallinn possède l'un des centres médiévaux les mieux préservés d'Europe.", desc_en:"Estonia is one of the world's most digitally advanced societies. Its capital Tallinn has one of Europe's best-preserved medieval centers.", lat:58.59, lng:25.01 },
+  { code:"FI", flag:"🇫🇮", fr:"Finlande", en:"Finland", capitale_fr:"Helsinki", capitale_en:"Helsinki", adhesion:1995, superficie:338145, population:"5,5M", monnaie:"Euro (€)", langue_fr:"Finnois/Suédois", langue_en:"Finnish/Swedish", desc_fr:"La Finlande, pays des mille lacs et de l'aurore boréale, est régulièrement en tête des classements mondiaux en éducation. Helsinki est une capitale design réputée.", desc_en:"Finland, land of a thousand lakes and the aurora borealis, regularly tops global education rankings. Helsinki is a renowned design capital.", lat:61.92, lng:25.74 },
+  { code:"FR", flag:"🇫🇷", fr:"France", en:"France", capitale_fr:"Paris", capitale_en:"Paris", adhesion:1958, superficie:551695, population:"68M", monnaie:"Euro (€)", langue_fr:"Français", langue_en:"French", desc_fr:"La France, membre fondateur de l'UE, est la destination touristique la plus visitée au monde. Berceau des droits de l'homme et de la gastronomie mondiale.", desc_en:"France, a founding EU member, is the world's most visited tourist destination. Birthplace of human rights and world gastronomy.", lat:46.23, lng:2.21 },
+  { code:"GR", flag:"🇬🇷", fr:"Grèce", en:"Greece", capitale_fr:"Athènes", capitale_en:"Athens", adhesion:1981, superficie:131957, population:"10,7M", monnaie:"Euro (€)", langue_fr:"Grec", langue_en:"Greek", desc_fr:"La Grèce est le berceau de la démocratie, de la philosophie et des Jeux Olympiques. Son patrimoine archéologique exceptionnel attire des millions de visiteurs.", desc_en:"Greece is the birthplace of democracy, philosophy, and the Olympic Games. Its exceptional archaeological heritage attracts millions of visitors.", lat:39.07, lng:21.82 },
+  { code:"HU", flag:"🇭🇺", fr:"Hongrie", en:"Hungary", capitale_fr:"Budapest", capitale_en:"Budapest", adhesion:2004, superficie:93028, population:"9,7M", monnaie:"Forint (HUF)", langue_fr:"Hongrois", langue_en:"Hungarian", desc_fr:"La Hongrie est au cœur de l'Europe centrale, avec Budapest, une des plus belles capitales européennes, straddling le Danube entre Buda et Pest.", desc_en:"Hungary is at the heart of Central Europe, with Budapest, one of Europe's most beautiful capitals, straddling the Danube between Buda and Pest.", lat:47.16, lng:19.50 },
+  { code:"IE", flag:"🇮🇪", fr:"Irlande", en:"Ireland", capitale_fr:"Dublin", capitale_en:"Dublin", adhesion:1973, superficie:70273, population:"5,1M", monnaie:"Euro (€)", langue_fr:"Anglais/Irlandais", langue_en:"English/Irish", desc_fr:"L'Irlande, île d'Émeraude, est connue pour son paysage verdoyant, sa culture celtique et sa tradition littéraire (Joyce, Beckett, Wilde). Hub technologique mondial.", desc_en:"Ireland, the Emerald Isle, is known for its green landscape, Celtic culture, and literary tradition (Joyce, Beckett, Wilde). A global tech hub.", lat:53.41, lng:-8.24 },
+  { code:"IT", flag:"🇮🇹", fr:"Italie", en:"Italy", capitale_fr:"Rome", capitale_en:"Rome", adhesion:1958, superficie:301340, population:"60M", monnaie:"Euro (€)", langue_fr:"Italien", langue_en:"Italian", desc_fr:"L'Italie, membre fondateur de l'UE, est le pays aux plus nombreux sites classés au patrimoine mondial de l'UNESCO. La mode, l'art et la gastronomie italiens sont universellement reconnus.", desc_en:"Italy, a founding EU member, has the most UNESCO World Heritage Sites. Italian fashion, art, and gastronomy are universally renowned.", lat:41.87, lng:12.57 },
+  { code:"LV", flag:"🇱🇻", fr:"Lettonie", en:"Latvia", capitale_fr:"Riga", capitale_en:"Riga", adhesion:2004, superficie:64589, population:"1,8M", monnaie:"Euro (€)", langue_fr:"Letton", langue_en:"Latvian", desc_fr:"La Lettonie, sur la mer Baltique, possède une architecture Art Nouveau exceptionnelle à Riga, inscrite au patrimoine mondial de l'UNESCO.", desc_en:"Latvia, on the Baltic Sea, has exceptional Art Nouveau architecture in Riga, listed as UNESCO World Heritage.", lat:56.88, lng:24.60 },
+  { code:"LT", flag:"🇱🇹", fr:"Lituanie", en:"Lithuania", capitale_fr:"Vilnius", capitale_en:"Vilnius", adhesion:2004, superficie:65300, population:"2,8M", monnaie:"Euro (€)", langue_fr:"Lituanien", langue_en:"Lithuanian", desc_fr:"La Lituanie est le plus grand des trois États baltes. Vilnius possède un vieux centre baroque remarquable, inscrit au patrimoine mondial de l'UNESCO.", desc_en:"Lithuania is the largest of the three Baltic States. Vilnius has a remarkable Baroque old town, listed as UNESCO World Heritage.", lat:55.17, lng:23.88 },
+  { code:"LU", flag:"🇱🇺", fr:"Luxembourg", en:"Luxembourg", capitale_fr:"Luxembourg", capitale_en:"Luxembourg City", adhesion:1958, superficie:2586, population:"660K", monnaie:"Euro (€)", langue_fr:"Luxembourgeois/Français/Allemand", langue_en:"Luxembourgish/French/German", desc_fr:"Le Luxembourg est l'un des pays les plus riches du monde par habitant. Siège de plusieurs institutions européennes, il est un centre financier et diplomatique majeur.", desc_en:"Luxembourg is one of the world's richest countries per capita. Home to several EU institutions, it is a major financial and diplomatic center.", lat:49.81, lng:6.13 },
+  { code:"MT", flag:"🇲🇹", fr:"Malte", en:"Malta", capitale_fr:"La Valette", capitale_en:"Valletta", adhesion:2004, superficie:316, population:"525K", monnaie:"Euro (€)", langue_fr:"Maltais/Anglais", langue_en:"Maltese/English", desc_fr:"Malte est le plus petit État membre de l'UE. Carrefour stratégique en Méditerranée, son histoire de 7000 ans comprend des temples mégalithiques parmi les plus anciens au monde.", desc_en:"Malta is the EU's smallest member state. A strategic crossroads in the Mediterranean, its 7,000-year history includes some of the world's oldest megalithic temples.", lat:35.93, lng:14.37 },
+  { code:"NL", flag:"🇳🇱", fr:"Pays-Bas", en:"Netherlands", capitale_fr:"Amsterdam", capitale_en:"Amsterdam", adhesion:1958, superficie:41543, population:"17,8M", monnaie:"Euro (€)", langue_fr:"Néerlandais", langue_en:"Dutch", desc_fr:"Les Pays-Bas, membres fondateurs de l'UE, sont connus pour leurs moulins à vent, leurs tulipes et leur système de polders. Rotterdam est le plus grand port d'Europe.", desc_en:"Netherlands, founding EU members, are known for windmills, tulips, and their polder system. Rotterdam is Europe's largest port.", lat:52.13, lng:5.29 },
+  { code:"PL", flag:"🇵🇱", fr:"Pologne", en:"Poland", capitale_fr:"Varsovie", capitale_en:"Warsaw", adhesion:2004, superficie:312696, population:"38M", monnaie:"Zloty (PLN)", langue_fr:"Polonais", langue_en:"Polish", desc_fr:"La Pologne est la sixième économie de l'UE. Le vieux centre de Cracovie et la vieille ville de Varsovie, reconstruite après la Seconde Guerre mondiale, sont inscrits à l'UNESCO.", desc_en:"Poland is the EU's sixth-largest economy. The old town of Kraków and Warsaw's old town, rebuilt after WWII, are UNESCO-listed.", lat:51.92, lng:19.14 },
+  { code:"PT", flag:"🇵🇹", fr:"Portugal", en:"Portugal", capitale_fr:"Lisbonne", capitale_en:"Lisbon", adhesion:1986, superficie:92212, population:"10,3M", monnaie:"Euro (€)", langue_fr:"Portugais", langue_en:"Portuguese", desc_fr:"Le Portugal est une nation d'explorateurs qui, aux XVe-XVIe siècles, ouvrit les routes maritimes vers l'Asie et l'Amérique. Lisbonne est une capitale en plein essor.", desc_en:"Portugal is a nation of explorers who, in the 15th-16th centuries, opened sea routes to Asia and the Americas. Lisbon is a booming capital.", lat:39.40, lng:-8.22 },
+  { code:"CZ", flag:"🇨🇿", fr:"République tchèque", en:"Czech Republic", capitale_fr:"Prague", capitale_en:"Prague", adhesion:2004, superficie:78867, population:"10,9M", monnaie:"Couronne tchèque", langue_fr:"Tchèque", langue_en:"Czech", desc_fr:"La République tchèque, au cœur de l'Europe, est réputée pour Prague, l'une des plus belles villes du monde, et pour la qualité de sa bière. Riche patrimoine industriel.", desc_en:"The Czech Republic, in the heart of Europe, is renowned for Prague, one of the world's most beautiful cities, and its beer quality. Rich industrial heritage.", lat:49.82, lng:15.47 },
+  { code:"RO", flag:"🇷🇴", fr:"Roumanie", en:"Romania", capitale_fr:"Bucarest", capitale_en:"Bucharest", adhesion:2007, superficie:238397, population:"19M", monnaie:"Leu (RON)", langue_fr:"Roumain", langue_en:"Romanian", desc_fr:"La Roumanie est le deuxième plus grand pays des Balkans. Connue pour la Transylvanie, les châteaux médiévaux et les Carpates, elle rejoint l'espace Schengen en 2024.", desc_en:"Romania is the second largest Balkan country. Known for Transylvania, medieval castles, and the Carpathians, it joined the Schengen area in 2024.", lat:45.94, lng:24.97 },
+  { code:"SK", flag:"🇸🇰", fr:"Slovaquie", en:"Slovakia", capitale_fr:"Bratislava", capitale_en:"Bratislava", adhesion:2004, superficie:49035, population:"5,5M", monnaie:"Euro (€)", langue_fr:"Slovaque", langue_en:"Slovak", desc_fr:"La Slovaquie est un pays montagneux au cœur de l'Europe centrale, réputé pour ses châteaux médiévaux, ses grottes karstiques et ses stations de ski.", desc_en:"Slovakia is a mountainous country in the heart of Central Europe, known for its medieval castles, karst caves, and ski resorts.", lat:48.67, lng:19.70 },
+  { code:"SI", flag:"🇸🇮", fr:"Slovénie", en:"Slovenia", capitale_fr:"Ljubljana", capitale_en:"Ljubljana", adhesion:2004, superficie:20273, population:"2,1M", monnaie:"Euro (€)", langue_fr:"Slovène", langue_en:"Slovenian", desc_fr:"La Slovénie est l'un des pays les plus verts d'Europe. Elle offre une diversité naturelle exceptionnelle : Alpes, Méditerranée, plaines pannoniennes et karst.", desc_en:"Slovenia is one of Europe's greenest countries. It offers exceptional natural diversity: Alps, Mediterranean, Pannonian plains, and karst.", lat:46.15, lng:14.99 },
+  { code:"SE", flag:"🇸🇪", fr:"Suède", en:"Sweden", capitale_fr:"Stockholm", capitale_en:"Stockholm", adhesion:1995, superficie:450295, population:"10,4M", monnaie:"Couronne suédoise", langue_fr:"Suédois", langue_en:"Swedish", desc_fr:"La Suède est un leader mondial en matière d'innovation, de durabilité et d'égalité. Stockholm, «Venise du Nord», est l'une des plus belles capitales européennes.", desc_en:"Sweden is a world leader in innovation, sustainability, and equality. Stockholm, the 'Venice of the North', is one of Europe's most beautiful capitals.", lat:60.13, lng:18.64 }
+];
+
+// =========================================================
+// DATA: INSTITUTIONS EUROPÉENNES
+// =========================================================
+const INSTITUTIONS = [
+  {
+    id: "parlement",
+    icon: "🏛",
+    color: "#1a3a6e",
+    fr: "Parlement européen",
+    en: "European Parliament",
+    tagline_fr: "Voix démocratique des citoyens",
+    tagline_en: "Democratic voice of EU citizens",
+    type_fr: "Institution législative",
+    type_en: "Legislative body",
+    founded: 1952,
+    siege_fr: "Strasbourg (plénière), Bruxelles (commissions), Luxembourg (secrétariat)",
+    siege_en: "Strasbourg (plenary), Brussels (committees), Luxembourg (secretariat)",
+    membres_fr: "720 eurodéputés (depuis 2024)",
+    membres_en: "720 MEPs (since 2024)",
+    mandat_fr: "5 ans — élection au suffrage universel direct",
+    mandat_en: "5 years — direct universal suffrage",
+    president_fr: "Roberta Metsola (depuis 2022)",
+    president_en: "Roberta Metsola (since 2022)",
+    role_fr: "Le Parlement européen est l'unique institution de l'UE élue directement par les citoyens des États membres, environ 450 millions d'électeurs. Il représente la légitimité démocratique de l'Union et partage le pouvoir législatif et budgétaire avec le Conseil. Il se réunit en séance plénière à Strasbourg et en commissions principalement à Bruxelles.",
+    role_en: "The European Parliament is the only EU institution directly elected by citizens of member states — approximately 450 million voters. It represents the Union's democratic legitimacy and shares legislative and budgetary power with the Council. It meets in plenary session in Strasbourg and in committees mainly in Brussels.",
+    pouvoirs_fr: ["Adopter les lois européennes conjointement avec le Conseil", "Voter le budget de l'Union européenne", "Contrôler la Commission européenne (motion de censure)", "Élire le Président de la Commission européenne", "Ratifier les accords internationaux"],
+    pouvoirs_en: ["Adopt EU laws jointly with the Council", "Vote on the European Union budget", "Oversee the European Commission (censure motions)", "Elect the President of the European Commission", "Ratify international agreements"]
+  },
+  {
+    id: "conseil_eu",
+    icon: "⚖️",
+    color: "#2a1a5e",
+    fr: "Conseil de l'Union européenne",
+    en: "Council of the European Union",
+    tagline_fr: "La voix des États membres",
+    tagline_en: "Voice of EU member states",
+    type_fr: "Institution législative",
+    type_en: "Legislative body",
+    founded: 1958,
+    siege_fr: "Bruxelles (principalement), Luxembourg (avril, juin, octobre)",
+    siege_en: "Brussels (mainly), Luxembourg (April, June, October)",
+    membres_fr: "1 ministre par État membre selon l'ordre du jour",
+    membres_en: "1 minister per member state depending on the agenda",
+    mandat_fr: "Présidence tournante tous les 6 mois",
+    mandat_en: "Rotating presidency every 6 months",
+    president_fr: "Présidence semestrielle tournante",
+    president_en: "Rotating 6-month presidency",
+    role_fr: "Le Conseil de l'UE réunit les ministres des 27 États membres selon les sujets à l'ordre du jour (affaires étrangères, finances, agriculture…). Il adopte la législation et coordonne les politiques des États. Il partage le pouvoir législatif avec le Parlement européen dans le cadre de la procédure de codécision.",
+    role_en: "The EU Council brings together ministers from the 27 member states depending on the agenda (foreign affairs, finance, agriculture…). It adopts legislation and coordinates member state policies. It shares legislative power with the European Parliament through the co-decision procedure.",
+    pouvoirs_fr: ["Adopter des lois européennes (avec le Parlement)", "Définir et coordonner les politiques de l'UE", "Conclure des accords internationaux", "Adopter le budget de l'UE (avec le Parlement)", "Coordonner les politiques économiques des États membres"],
+    pouvoirs_en: ["Adopt European laws (with Parliament)", "Define and coordinate EU policies", "Conclude international agreements", "Adopt the EU budget (with Parliament)", "Coordinate member states' economic policies"]
+  },
+  {
+    id: "conseil_eur",
+    icon: "🌐",
+    color: "#003399",
+    fr: "Conseil européen",
+    en: "European Council",
+    tagline_fr: "L'impulsion politique de l'Union",
+    tagline_en: "The political impulse of the Union",
+    type_fr: "Institution de direction",
+    type_en: "Directing body",
+    founded: 1974,
+    siege_fr: "Bruxelles — bâtiment Europa",
+    siege_en: "Brussels — Europa building",
+    membres_fr: "27 chefs d'État ou de gouvernement + Président du Conseil + Président de la Commission",
+    membres_en: "27 heads of state or government + Council President + Commission President",
+    mandat_fr: "Président élu pour 2,5 ans (renouvelable une fois)",
+    mandat_en: "President elected for 2.5 years (once renewable)",
+    president_fr: "António Costa (depuis décembre 2024)",
+    president_en: "António Costa (since December 2024)",
+    role_fr: "Le Conseil européen réunit les chefs d'État ou de gouvernement des 27 pays membres pour définir les grandes orientations politiques de l'Union. Il se réunit au moins 4 fois par an à Bruxelles. Il ne légifère pas mais fixe les priorités et les impulsions stratégiques de l'UE.",
+    role_en: "The European Council brings together the heads of state or government of the 27 member countries to define the EU's main political orientations. It meets at least 4 times a year in Brussels. It does not legislate but sets the EU's strategic priorities and impulses.",
+    pouvoirs_fr: ["Définir les grandes orientations politiques de l'UE", "Nommer le Président de la Commission européenne", "Décider des élargissements de l'UE", "Résoudre les crises politiques majeures", "Représenter l'Union sur la scène internationale"],
+    pouvoirs_en: ["Define the EU's main political orientations", "Nominate the President of the European Commission", "Decide on EU enlargements", "Resolve major political crises", "Represent the Union on the international stage"]
+  },
+  {
+    id: "commission",
+    icon: "⚙️",
+    color: "#1a5e2a",
+    fr: "Commission européenne",
+    en: "European Commission",
+    tagline_fr: "Gardienne des traités, moteur de l'intégration",
+    tagline_en: "Guardian of treaties, engine of integration",
+    type_fr: "Institution exécutive",
+    type_en: "Executive body",
+    founded: 1958,
+    siege_fr: "Bruxelles (bâtiments Berlaymont et Charlemagne), Luxembourg",
+    siege_en: "Brussels (Berlaymont and Charlemagne buildings), Luxembourg",
+    membres_fr: "27 commissaires (un par État membre)",
+    membres_en: "27 commissioners (one per member state)",
+    mandat_fr: "5 ans — investie par le Parlement européen",
+    mandat_en: "5 years — invested by the European Parliament",
+    president_fr: "Ursula von der Leyen (depuis 2019, reconduite 2024)",
+    president_en: "Ursula von der Leyen (since 2019, renewed 2024)",
+    role_fr: "La Commission est l'organe exécutif de l'Union européenne. Elle dispose du monopole de l'initiative législative, veille à l'application des traités et représente l'UE dans les négociations commerciales internationales. Elle gère le budget de l'UE et prépare les programmes de financement.",
+    role_en: "The Commission is the executive body of the European Union. It holds the monopoly on legislative initiative, oversees the application of treaties, and represents the EU in international trade negotiations. It manages the EU budget and prepares funding programs.",
+    pouvoirs_fr: ["Proposer les textes législatifs (monopole d'initiative)", "Veiller à l'application du droit de l'UE", "Gérer les politiques et le budget de l'UE", "Représenter l'UE dans les négociations commerciales", "Sanctionner les violations du droit communautaire"],
+    pouvoirs_en: ["Propose legislative texts (initiative monopoly)", "Ensure application of EU law", "Manage EU policies and budget", "Represent the EU in trade negotiations", "Sanction violations of EU law"]
+  },
+  {
+    id: "cour_justice",
+    icon: "⚖",
+    color: "#5e1a1a",
+    fr: "Cour de justice de l'UE",
+    en: "Court of Justice of the EU",
+    tagline_fr: "Garantir le respect du droit européen",
+    tagline_en: "Ensuring respect for European law",
+    type_fr: "Institution judiciaire",
+    type_en: "Judicial body",
+    founded: 1952,
+    siege_fr: "Luxembourg — Kirchberg",
+    siege_en: "Luxembourg — Kirchberg",
+    membres_fr: "27 juges + 11 avocats généraux (Cour de justice) ; 54 juges (Tribunal)",
+    membres_en: "27 judges + 11 advocates general (Court of Justice); 54 judges (General Court)",
+    mandat_fr: "6 ans renouvelable — désignés d'un commun accord",
+    mandat_en: "6 years renewable — designated by common accord",
+    president_fr: "Koen Lenaerts (depuis 2015)",
+    president_en: "Koen Lenaerts (since 2015)",
+    role_fr: "La Cour de justice de l'UE est l'institution judiciaire suprême de l'Union. Elle garantit que le droit communautaire est interprété et appliqué de manière uniforme dans tous les États membres. Elle est composée de la Cour de justice (questions de principe) et du Tribunal (litiges directs).",
+    role_en: "The Court of Justice of the EU is the supreme judicial institution of the Union. It ensures that EU law is interpreted and applied uniformly across all member states. It consists of the Court of Justice (matters of principle) and the General Court (direct disputes).",
+    pouvoirs_fr: ["Interpréter le droit de l'UE (renvois préjudiciels)", "Statuer sur les recours en manquement contre les États", "Annuler les actes illégaux des institutions", "Assurer l'application uniforme du droit communautaire", "Trancher les litiges entre institutions"],
+    pouvoirs_en: ["Interpret EU law (preliminary references)", "Rule on infringement proceedings against states", "Annul illegal acts of institutions", "Ensure uniform application of EU law", "Settle disputes between institutions"]
+  },
+  {
+    id: "bce",
+    icon: "💶",
+    color: "#4a3a1a",
+    fr: "Banque centrale européenne",
+    en: "European Central Bank",
+    tagline_fr: "Stabilité des prix dans la zone euro",
+    tagline_en: "Price stability in the eurozone",
+    type_fr: "Institution monétaire",
+    type_en: "Monetary institution",
+    founded: 1998,
+    siege_fr: "Francfort-sur-le-Main, Allemagne",
+    siege_en: "Frankfurt am Main, Germany",
+    membres_fr: "Directoire (6 membres) + gouverneurs des 20 banques centrales de la zone euro",
+    membres_en: "Executive Board (6 members) + governors of the 20 eurozone central banks",
+    mandat_fr: "Président : 8 ans non renouvelable",
+    mandat_en: "President: 8 years non-renewable",
+    president_fr: "Christine Lagarde (depuis 2019)",
+    president_en: "Christine Lagarde (since 2019)",
+    role_fr: "La BCE est la banque centrale des 20 États membres ayant adopté l'euro. Elle définit et conduit la politique monétaire de la zone euro, dont l'objectif principal est la stabilité des prix (inflation proche de 2 %). Elle supervise également les grandes banques européennes.",
+    role_en: "The ECB is the central bank for the 20 member states that have adopted the euro. It defines and conducts monetary policy for the eurozone, whose main objective is price stability (inflation close to 2%). It also supervises major European banks.",
+    pouvoirs_fr: ["Définir la politique monétaire de la zone euro", "Fixer les taux d'intérêt directeurs", "Gérer les réserves de change officielles", "Superviser les grandes banques européennes (MSU)", "Autoriser l'émission des billets en euros"],
+    pouvoirs_en: ["Define eurozone monetary policy", "Set key interest rates", "Manage official foreign exchange reserves", "Supervise major European banks (SSM)", "Authorize the issuance of euro banknotes"]
+  },
+  {
+    id: "cour_comptes",
+    icon: "🔍",
+    color: "#2a3a5e",
+    fr: "Cour des comptes européenne",
+    en: "European Court of Auditors",
+    tagline_fr: "Contrôle des finances de l'Union",
+    tagline_en: "Auditor of EU finances",
+    type_fr: "Institution de contrôle",
+    type_en: "Audit body",
+    founded: 1977,
+    siege_fr: "Luxembourg — Kirchberg",
+    siege_en: "Luxembourg — Kirchberg",
+    membres_fr: "27 membres (un par État membre)",
+    membres_en: "27 members (one per member state)",
+    mandat_fr: "6 ans renouvelable",
+    mandat_en: "6 years renewable",
+    president_fr: "Tony Murphy (depuis 2022)",
+    president_en: "Tony Murphy (since 2022)",
+    role_fr: "La Cour des comptes européenne est l'auditeur externe indépendant de l'UE. Elle contrôle la légalité et la régularité des recettes et dépenses de l'Union, et s'assure de la bonne gestion financière des fonds européens. Ses rapports d'audit alimentent le contrôle démocratique du Parlement.",
+    role_en: "The European Court of Auditors is the EU's independent external auditor. It checks the legality and regularity of the Union's revenue and expenditure, and ensures sound financial management of European funds. Its audit reports feed into Parliament's democratic oversight.",
+    pouvoirs_fr: ["Auditer les recettes et dépenses de l'UE", "Publier des rapports annuels et spéciaux", "Formuler des recommandations d'amélioration", "Contribuer à la décharge budgétaire annuelle", "Émettre des avis sur les nouvelles législations financières"],
+    pouvoirs_en: ["Audit EU revenue and expenditure", "Publish annual and special reports", "Make recommendations for improvement", "Contribute to the annual budget discharge", "Issue opinions on new financial legislation"]
+  },
+  {
+    id: "comite_regions",
+    icon: "🗺",
+    color: "#1a4a3a",
+    fr: "Comité des régions",
+    en: "Committee of the Regions",
+    tagline_fr: "La voix des collectivités locales",
+    tagline_en: "Voice of local and regional authorities",
+    type_fr: "Organe consultatif",
+    type_en: "Advisory body",
+    founded: 1994,
+    siege_fr: "Bruxelles",
+    siege_en: "Brussels",
+    membres_fr: "329 membres — élus locaux et régionaux",
+    membres_en: "329 members — local and regional elected representatives",
+    mandat_fr: "5 ans",
+    mandat_en: "5 years",
+    president_fr: "Vasco Alves Cordeiro (depuis 2022)",
+    president_en: "Vasco Alves Cordeiro (since 2022)",
+    role_fr: "Le Comité des régions représente les collectivités locales et régionales de l'UE. Il doit être consulté obligatoirement sur les sujets touchant aux domaines régionaux : politique régionale, environnement, éducation, culture, transports. Il peut saisir la Cour de justice si ses prérogatives sont ignorées.",
+    role_en: "The Committee of the Regions represents local and regional authorities in the EU. It must be mandatorily consulted on matters touching regional domains: regional policy, environment, education, culture, transport. It can refer matters to the Court of Justice if its prerogatives are ignored.",
+    pouvoirs_fr: ["Émettre des avis consultatifs obligatoires", "Contrôler le respect du principe de subsidiarité", "Saisir la Cour de justice (depuis le Traité de Lisbonne)", "Représenter les 1 million d'élus locaux de l'UE", "Promouvoir la gouvernance multi-niveaux"],
+    pouvoirs_en: ["Issue mandatory consultative opinions", "Monitor respect for the subsidiarity principle", "Refer to the Court of Justice (since Lisbon Treaty)", "Represent the EU's 1 million local elected officials", "Promote multi-level governance"]
+  }
+];
+
+const INSTIT_GROUPS = {
+  fr: [
+    { label: "Institutions principales", ids: ["parlement","conseil_eu","conseil_eur","commission"] },
+    { label: "Institutions judiciaires & financières", ids: ["cour_justice","bce","cour_comptes"] },
+    { label: "Organes consultatifs", ids: ["comite_regions"] }
+  ],
+  en: [
+    { label: "Main Institutions", ids: ["parlement","conseil_eu","conseil_eur","commission"] },
+    { label: "Judicial & Financial Institutions", ids: ["cour_justice","bce","cour_comptes"] },
+    { label: "Advisory Bodies", ids: ["comite_regions"] }
+  ]
+};
+
+// =========================================================
+// INSTITUTIONS RENDERING
+// =========================================================
+function renderInstitutions() {
+  const list = document.getElementById('instit-list');
+  const groups = currentLang === 'fr' ? INSTIT_GROUPS.fr : INSTIT_GROUPS.en;
+  const intro = currentLang === 'fr'
+    ? "L'Union européenne repose sur un système institutionnel unique, qui partage les pouvoirs entre plusieurs organes aux rôles complémentaires."
+    : "The European Union is built on a unique institutional system, sharing powers between several bodies with complementary roles.";
+
+  let html = `<div class="instit-intro">${intro}</div>`;
+  groups.forEach(g => {
+    html += `<div class="instit-section-header">${g.label}</div>`;
+    g.ids.forEach(id => {
+      const inst = INSTITUTIONS.find(i => i.id === id);
+      if (!inst) return;
+      const nom = currentLang === 'fr' ? inst.fr : inst.en;
+      const tag = currentLang === 'fr' ? inst.tagline_fr : inst.tagline_en;
+      const type = currentLang === 'fr' ? inst.type_fr : inst.type_en;
+      html += `<div class="instit-card" onclick="showInstit('${id}')">
+        <div class="instit-card-icon">${inst.icon}</div>
+        <div class="instit-card-body">
+          <div class="instit-card-nom">${nom}</div>
+          <div class="instit-card-tagline">${tag}</div>
+          <div class="instit-card-badge">${type} · ${inst.founded}</div>
+        </div>
+        <span class="instit-card-arrow">›</span>
+      </div>`;
+    });
+  });
+  list.innerHTML = html;
+}
+
+function showInstit(id) {
+  const inst = INSTITUTIONS.find(i => i.id === id);
+  if (!inst) return;
+  const nom = currentLang === 'fr' ? inst.fr : inst.en;
+  const nomAlt = currentLang === 'fr' ? inst.en : inst.fr;
+  const role = currentLang === 'fr' ? inst.role_fr : inst.role_en;
+  const siege = currentLang === 'fr' ? inst.siege_fr : inst.siege_en;
+  const membres = currentLang === 'fr' ? inst.membres_fr : inst.membres_en;
+  const mandat = currentLang === 'fr' ? inst.mandat_fr : inst.mandat_en;
+  const president = currentLang === 'fr' ? inst.president_fr : inst.president_en;
+  const pouvoirs = currentLang === 'fr' ? inst.pouvoirs_fr : inst.pouvoirs_en;
+
+  document.getElementById('instit-title').textContent = nom;
+  document.getElementById('instit-icon-header').textContent = inst.icon;
+  document.getElementById('instit-icon-large').textContent = inst.icon;
+  document.getElementById('instit-nom').textContent = nom;
+  document.getElementById('instit-nom-en').textContent = nomAlt;
+  document.getElementById('instit-founded-badge').textContent = `${currentLang==='fr'?'Fondée en':'Founded in'} ${inst.founded}`;
+  document.getElementById('instit-role').textContent = role;
+  document.getElementById('instit-siege').textContent = siege;
+
+  const rl = currentLang === 'fr'
+    ? { role:'Rôle', compo:'Composition', powers:'Pouvoirs & Fonctions', siege:'Siège', mb:'Membres', md:'Mandat', pr:'Président(e)' }
+    : { role:'Role', compo:'Composition', powers:'Powers & Functions', siege:'Location', mb:'Members', md:'Mandate', pr:'President' };
+  document.getElementById('instit-role-title').textContent = rl.role;
+  document.getElementById('instit-compo-title').textContent = rl.compo;
+  document.getElementById('instit-powers-title').textContent = rl.powers;
+  document.getElementById('instit-siege-title').textContent = rl.siege;
+
+  document.getElementById('instit-info-grid').innerHTML = `
+    <div class="info-card"><div class="label">${rl.mb}</div><div class="value" style="font-size:12px;line-height:1.3">${membres}</div></div>
+    <div class="info-card"><div class="label">${rl.md}</div><div class="value" style="font-size:12px;line-height:1.3">${mandat}</div></div>
+    <div class="info-card" style="grid-column:1/-1"><div class="label">${rl.pr}</div><div class="value" style="font-size:13px">${president}</div></div>
+  `;
+
+  document.getElementById('instit-powers-list').innerHTML = pouvoirs.map(p =>
+    `<div class="instit-power-item">
+      <span class="instit-power-bullet">◆</span>
+      <span class="instit-power-text">${p}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById('instit-overlay').classList.add('open');
+}
+
+function closeInstit() {
+  document.getElementById('instit-overlay').classList.remove('open');
+}
+
+// =========================================================
+// DATA: MES APPS
+// =========================================================
+const MES_APPS = [
+  { nom_fr:"Rois de France", nom_en:"Kings of France", icon:"👑", cat_fr:"Histoire", cat_en:"History", id:"id6761323546" },
+  { nom_fr:"Présidents de la République", nom_en:"French Presidents", icon:"🏛", cat_fr:"Histoire", cat_en:"History", id:"id6761424444" },
+  { nom_fr:"Académie française", nom_en:"Académie française", icon:"📚", cat_fr:"Culture", cat_en:"Culture", id:"id6761334922" },
+  { nom_fr:"Théâtres Paris", nom_en:"Paris Theatres", icon:"🎭", cat_fr:"Spectacles", cat_en:"Shows", id:"id6760929391" },
+  { nom_fr:"Musées de Paris", nom_en:"Paris Museums", icon:"🖼", cat_fr:"Culture", cat_en:"Culture", id:"id6760890465" },
+  { nom_fr:"Cimetières Paris", nom_en:"Paris Cemeteries", icon:"🕊", cat_fr:"Patrimoine", cat_en:"Heritage", id:"id6760751055" },
+  { nom_fr:"Châteaux de la Loire", nom_en:"Loire Châteaux", icon:"🏰", cat_fr:"Patrimoine", cat_en:"Heritage", id:"" },
+  { nom_fr:"Maréchaux d'Empire", nom_en:"Empire Marshals", icon:"⚔️", cat_fr:"Histoire", cat_en:"History", id:"" },
+  { nom_fr:"Panthéon · Paris", nom_en:"Panthéon · Paris", icon:"⚱️", cat_fr:"Histoire", cat_en:"History", id:"" },
+  { nom_fr:"Capitales d'Europe", nom_en:"European Capitals", icon:"🌍", cat_fr:"Géographie", cat_en:"Geography", id:"" },
+  { nom_fr:"Grands Compositeurs", nom_en:"Great Composers", icon:"🎼", cat_fr:"Musique", cat_en:"Music", id:"" },
+  { nom_fr:"Frigo Manager", nom_en:"Frigo Manager", icon:"🧊", cat_fr:"Utilitaire", cat_en:"Utility", id:"id6759219383" }
+];
+
+// =========================================================
+// STATE
+// =========================================================
+let currentLang = 'fr';
+let mapInstance = null;
+let mapMarkers = [];
+let quizType = 'capitale';
+let quizQuestions = [];
+let quizCurrent = 0;
+let quizScore = 0;
+let quizAnswered = false;
+const QUIZ_TOTAL = 10;
+
+// =========================================================
+// LANG
+// =========================================================
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  applyLang();
+}
+
+function t(el, key) {
+  return el.dataset[key] || el.textContent;
+}
+
+function applyLang() {
+  document.querySelectorAll('[data-fr]').forEach(el => {
+    el.textContent = currentLang === 'fr' ? el.dataset.fr : el.dataset.en;
+  });
+  const si = document.getElementById('search-input');
+  if (si) si.placeholder = currentLang === 'fr' ? si.dataset.placeholderFr : si.dataset.placeholderEn;
+  document.getElementById('h-subtitle').textContent = currentLang === 'fr' ? 'Les 27 pays membres' : 'The 27 member states';
+  renderPaysList(document.getElementById('search-input')?.value || '');
+  renderApps();
+  renderInstitutions();
+  if (quizQuestions.length > 0) renderQuestion();
+}
+
+// =========================================================
+// TABS
+// =========================================================
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  document.getElementById('btn-' + id).classList.add('active');
+  if (id === 'carte' && !mapInstance) initMap();
+  if (id === 'quiz' && quizQuestions.length === 0) startQuiz();
+  if (id === 'instit') renderInstitutions();
+}
+
+// =========================================================
+// PAYS LIST
+// =========================================================
+function renderPaysList(filter = '') {
+  const list = document.getElementById('pays-list');
+  const q = filter.toLowerCase();
+  const pays = PAYS_UE.filter(p => {
+    const nom = currentLang === 'fr' ? p.fr : p.en;
+    const cap = currentLang === 'fr' ? p.capitale_fr : p.capitale_en;
+    return nom.toLowerCase().includes(q) || cap.toLowerCase().includes(q);
+  }).sort((a,b) => {
+    const na = currentLang === 'fr' ? a.fr : a.en;
+    const nb = currentLang === 'fr' ? b.fr : b.en;
+    return na.localeCompare(nb);
+  });
+  list.innerHTML = pays.map(p => {
+    const nom = currentLang === 'fr' ? p.fr : p.en;
+    const cap = (currentLang === 'fr' ? p.capitale_fr : p.capitale_en);
+    const capLabel = currentLang === 'fr' ? 'Capitale' : 'Capital';
+    return `<div class="pays-item" onclick="showDetail('${p.code}')">
+      <span class="pays-flag">${p.flag}</span>
+      <div class="pays-info">
+        <div class="pays-nom">${nom}</div>
+        <div class="pays-capitale">${capLabel} : ${cap}</div>
+      </div>
+      <span class="pays-arrow">›</span>
+    </div>`;
+  }).join('');
+}
+
+function filterPays(val) {
+  renderPaysList(val);
+}
+
+// =========================================================
+// DETAIL
+// =========================================================
+function showDetail(code) {
+  const p = PAYS_UE.find(x => x.code === code);
+  if (!p) return;
+  const nom = currentLang === 'fr' ? p.fr : p.en;
+  const nomAlt = currentLang === 'fr' ? p.en : p.fr;
+  document.getElementById('detail-title').textContent = nom;
+  document.getElementById('detail-flag-header').textContent = p.flag;
+  document.getElementById('detail-flag-large').textContent = p.flag;
+  document.getElementById('detail-nom').textContent = nom;
+  document.getElementById('detail-nom-en').textContent = nomAlt;
+  const cap = currentLang === 'fr' ? p.capitale_fr : p.capitale_en;
+  const lang = currentLang === 'fr' ? p.langue_fr : p.langue_en;
+  document.getElementById('d-infos-title').textContent = currentLang === 'fr' ? 'Informations' : 'Information';
+  document.getElementById('d-desc-title').textContent = currentLang === 'fr' ? 'Description' : 'Description';
+  const labels = currentLang === 'fr'
+    ? { cap:'Capitale', adh:'Adhésion UE', sup:'Superficie', pop:'Population', mon:'Monnaie', lng:'Langue(s)' }
+    : { cap:'Capital', adh:'EU Entry', sup:'Area', pop:'Population', mon:'Currency', lng:'Language(s)' };
+  document.getElementById('info-grid').innerHTML = `
+    <div class="info-card"><div class="label">${labels.cap}</div><div class="value">${cap}</div></div>
+    <div class="info-card"><div class="label">${labels.adh}</div><div class="value">${p.adhesion}</div></div>
+    <div class="info-card"><div class="label">${labels.sup}</div><div class="value">${p.superficie.toLocaleString()} km²</div></div>
+    <div class="info-card"><div class="label">${labels.pop}</div><div class="value">${p.population}</div></div>
+    <div class="info-card"><div class="label">${labels.mon}</div><div class="value">${p.monnaie}</div></div>
+    <div class="info-card"><div class="label">${labels.lng}</div><div class="value" style="font-size:12px">${lang}</div></div>
+  `;
+  document.getElementById('detail-desc').textContent = currentLang === 'fr' ? p.desc_fr : p.desc_en;
+  document.getElementById('detail-overlay').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detail-overlay').classList.remove('open');
+}
+
+// =========================================================
+// CARTE
+// =========================================================
+function initMap() {
+  mapInstance = L.map('map', {
+    center: [52, 12], zoom: 4,
+    zoomControl: true, attributionControl: false
+  });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18
+  }).addTo(mapInstance);
+
+  PAYS_UE.forEach(p => {
+    const nom = currentLang === 'fr' ? p.fr : p.en;
+    const cap = currentLang === 'fr' ? p.capitale_fr : p.capitale_en;
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="font-size:22px;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.8))">${p.flag}</div>`,
+      iconSize: [28, 28], iconAnchor: [14, 14]
+    });
+    const marker = L.marker([p.lat, p.lng], { icon })
+      .addTo(mapInstance)
+      .bindPopup(`
+        <div style="font-family:'Cormorant Garamond',serif;text-align:center;min-width:120px">
+          <div style="font-size:32px">${p.flag}</div>
+          <div style="font-size:16px;font-weight:600;color:#c9a84c">${nom}</div>
+          <div style="font-size:13px;color:#666">🏛 ${cap}</div>
+          <div style="font-size:11px;color:#999;margin-top:4px">UE ${p.adhesion}</div>
+        </div>
+      `, { maxWidth: 180 });
+    mapMarkers.push({ code: p.code, marker });
+  });
+}
+
+// =========================================================
+// QUIZ
+// =========================================================
+function setQuizType(type) {
+  quizType = type;
+  document.querySelectorAll('.quiz-type-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('qtype-' + type).classList.add('active');
+  startQuiz();
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  quizScore = 0;
+  quizCurrent = 0;
+  quizAnswered = false;
+  const shuffled = shuffle(PAYS_UE).slice(0, QUIZ_TOTAL);
+  quizQuestions = shuffled.map(p => {
+    const wrong = shuffle(PAYS_UE.filter(x => x.code !== p.code)).slice(0, 3);
+    const all = shuffle([p, ...wrong]);
+    return { pays: p, options: all };
+  });
+  document.getElementById('q-score').textContent = '0';
+  document.getElementById('q-total').textContent = QUIZ_TOTAL;
+  document.getElementById('quiz-result').classList.remove('show');
+  document.getElementById('question-card').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (quizCurrent >= QUIZ_TOTAL) { showResult(); return; }
+  const q = quizQuestions[quizCurrent];
+  const p = q.pays;
+  quizAnswered = false;
+
+  document.getElementById('q-num').textContent = `${currentLang==='fr'?'QUESTION':'QUESTION'} ${quizCurrent+1} / ${QUIZ_TOTAL}`;
+  document.getElementById('q-current').textContent = quizCurrent + 1;
+
+  let qFlag = '', qText = '';
+  if (quizType === 'capitale') {
+    qFlag = p.flag;
+    const capLabel = currentLang === 'fr' ? 'Quelle est la capitale de' : "What is the capital of";
+    const nom = currentLang === 'fr' ? p.fr : p.en;
+    qText = `${capLabel} ${nom} ?`;
+  } else if (quizType === 'drapeau') {
+    qFlag = p.flag;
+    qText = currentLang === 'fr' ? 'À quel pays appartient ce drapeau ?' : 'Which country does this flag belong to?';
+  } else {
+    qFlag = '';
+    const cap = currentLang === 'fr' ? p.capitale_fr : p.capitale_en;
+    qText = currentLang === 'fr'
+      ? `${cap} est la capitale de quel pays ?`
+      : `${cap} is the capital of which country?`;
+  }
+
+  document.getElementById('q-flag').textContent = qFlag;
+  document.getElementById('q-text').textContent = qText;
+
+  const grid = document.getElementById('answers-grid');
+  grid.innerHTML = q.options.map(opt => {
+    let label = '';
+    if (quizType === 'capitale') {
+      label = currentLang === 'fr' ? opt.capitale_fr : opt.capitale_en;
+    } else if (quizType === 'drapeau') {
+      label = currentLang === 'fr' ? opt.fr : opt.en;
+    } else {
+      label = currentLang === 'fr' ? opt.fr : opt.en;
+    }
+    return `<button class="answer-btn" onclick="checkAnswer('${opt.code}')">${label}</button>`;
+  }).join('');
+
+  document.getElementById('quiz-feedback').classList.remove('show','correct','wrong');
+  document.getElementById('next-btn').classList.remove('show');
+}
+
+function checkAnswer(code) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = quizQuestions[quizCurrent];
+  const correct = q.pays.code === code;
+  const btns = document.querySelectorAll('.answer-btn');
+  btns.forEach(btn => {
+    btn.classList.add('disabled');
+    const label = btn.textContent.trim();
+    let correctLabel = '';
+    if (quizType === 'capitale') correctLabel = currentLang==='fr' ? q.pays.capitale_fr : q.pays.capitale_en;
+    else correctLabel = currentLang==='fr' ? q.pays.fr : q.pays.en;
+    if (label === correctLabel) btn.classList.add('correct');
+  });
+  if (!correct) {
+    // find and mark clicked wrong
+    event.target.classList.add('wrong');
+    event.target.classList.remove('disabled');
+  }
+  if (correct) quizScore++;
+  document.getElementById('q-score').textContent = quizScore;
+  const fb = document.getElementById('quiz-feedback');
+  if (correct) {
+    fb.textContent = currentLang==='fr' ? '✓ Bonne réponse !' : '✓ Correct!';
+    fb.className = 'quiz-feedback show correct';
+  } else {
+    const corr = quizType === 'capitale'
+      ? (currentLang==='fr' ? q.pays.capitale_fr : q.pays.capitale_en)
+      : (currentLang==='fr' ? q.pays.fr : q.pays.en);
+    fb.textContent = (currentLang==='fr' ? '✗ Réponse : ' : '✗ Answer: ') + corr;
+    fb.className = 'quiz-feedback show wrong';
+  }
+  document.getElementById('next-btn').classList.add('show');
+}
+
+function nextQuestion() {
+  quizCurrent++;
+  if (quizCurrent >= QUIZ_TOTAL) showResult();
+  else renderQuestion();
+}
+
+function showResult() {
+  document.getElementById('question-card').style.display = 'none';
+  const res = document.getElementById('quiz-result');
+  res.classList.add('show');
+  document.getElementById('result-score').textContent = `${quizScore}/${QUIZ_TOTAL}`;
+  const pct = quizScore / QUIZ_TOTAL;
+  let title, msg;
+  if (currentLang === 'fr') {
+    if (pct >= 0.9) { title = 'Excellent !'; msg = 'Vous connaissez parfaitement l\'Union Européenne !'; }
+    else if (pct >= 0.7) { title = 'Très bien !'; msg = 'Bravo, vous maîtrisez la géographie européenne.'; }
+    else if (pct >= 0.5) { title = 'Pas mal !'; msg = 'Quelques révisions s\'imposent…'; }
+    else { title = 'À revoir…'; msg = 'L\'Europe n\'a pas de secrets pour personne — continuez !'; }
+  } else {
+    if (pct >= 0.9) { title = 'Excellent!'; msg = 'You know the European Union perfectly!'; }
+    else if (pct >= 0.7) { title = 'Very good!'; msg = 'Well done, you master European geography.'; }
+    else if (pct >= 0.5) { title = 'Not bad!'; msg = 'A little more studying needed…'; }
+    else { title = 'Keep learning!'; msg = 'Europe has no secrets — keep going!'; }
+  }
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-msg').textContent = msg;
+}
+
+// =========================================================
+// MES APPS
+// =========================================================
+function renderApps() {
+  const grid = document.getElementById('apps-grid');
+  grid.innerHTML = MES_APPS.map(a => {
+    const nom = currentLang === 'fr' ? a.nom_fr : a.nom_en;
+    const cat = currentLang === 'fr' ? a.cat_fr : a.cat_en;
+    const url = a.id ? `https://apps.apple.com/app/${a.id}` : '#';
+    return `<a class="app-card" href="${url}" onclick="openApp(event,'${url}')">
+      <span class="app-icon">${a.icon}</span>
+      <div class="app-name">${nom}</div>
+      <div class="app-cat">${cat}</div>
+    </a>`;
+  }).join('');
+}
+
+function openApp(e, url) {
+  e.preventDefault();
+  if (url === '#') return;
+  if (window.Capacitor) window.open(url, '_system');
+  else window.open(url, '_blank');
+}
+
+// =========================================================
+// MODAL
+// =========================================================
+function showModal(title, msg) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-msg').textContent = msg;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(e) {
+  if (e.target.id === 'modal-overlay') document.getElementById('modal-overlay').classList.remove('open');
+}
+function closeModalBtn() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// =========================================================
+// INIT
+// =========================================================
+window.addEventListener('DOMContentLoaded', () => {
+  renderPaysList();
+  renderApps();
+  renderInstitutions();
+  startQuiz();
+});
+</script>
+</body>
+</html>
